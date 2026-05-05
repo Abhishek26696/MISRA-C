@@ -84,6 +84,8 @@ Many bugs in C come from unclear or unsafe type behavior. MISRA C places strong 
 - Be careful with integer promotions and usual arithmetic conversions.
 - Keep casts visible and justified.
 - Use fixed or project-defined types when width and range matter.
+
+```
 Example:
 
 unsigned int u = 1U;
@@ -93,4 +95,159 @@ if (s < u)  /* Noncompliant style: mixed signed and unsigned comparison */
 {
     /* ... */
 }
+```
+## Expressions and side effects
+Complex expressions are harder to review and more likely to hide subtle bugs. MISRA C prefers expressions that do one thing clearly.
+
+- Avoid multiple side effects in one expression.
+- Do not depend on evaluation order unless the language guarantees it.
+- Use intermediate variables when they improve readability and safety.
+- Keep arithmetic and logical intent explicit.
+
+```
+Example:
+
+a[i] = i++; /* Noncompliant: modifies and uses i in the same expression */
+```
+
+## Control Flow
+Control flow in critical code should be explicit, complete, and easy to reason about.
+
+- Ensure every decision path is intentional.
+- Use well-formed if, switch, and loop constructs.
+- Make loop termination conditions clear.
+- Avoid fragile or confusing branching logic.
+
+```
+Example:
+
+if (speed > 100)
+{
+    alarm = 1;
+}
+else if (speed < 20)
+{
+    alarm = 0;
+}
+else
+{
+    /* Explicit final branch */
+}
+```
+
+## Pointers and arrays
+Pointers are one of the biggest strengths of C, but also one of its biggest risks. MISRA C therefore treats pointer usage very carefully.
+
+- Use pointers conservatively.
+- Avoid unsafe pointer conversions.
+- Keep array bounds visible and controlled.
+- Prevent invalid access, aliasing problems, and overlap issues.
+
+```
+Example:
+
+int arr[10];
+int *p = arr;
+
+p[10] = 5; /* Noncompliant: out-of-bounds access */
+```
+
+## Functions and interfaces
+Functions should have clear responsibilities and consistent interfaces.
+
+- Keep interfaces type-safe and explicit.
+- Make sure declarations and definitions match.
+- Avoid unused parameters unless they are clearly intentional.
+- Use return values meaningfully.
+
+```
+Example:
+
+void log_message(int level, const char *msg)
+{
+    (void)level; /* Suspicious if level is never used */
+    /* msg handling */
+}
+```
+
+## Preprocessor usage
+The preprocessor is powerful, but it can hide logic and make code harder to analyze. MISRA C expects it to be used carefully.
+
+- Keep macros simple and controlled.
+- Avoid macros that behave like hidden functions or expressions.
+- Use include guards consistently.
+- Keep conditional compilation understandable and justified.
+
+```
+Example:
+
+#define SQUARE(x) x * x /* Noncompliant style */
+Safer pattern:
+
+#define SQUARE(x) ((x) * (x))
+```
+
+## Dynamic memory
+Dynamic memory is often discouraged in critical embedded systems because it can introduce fragmentation, failure paths, and non-deterministic timing.
+
+- Avoid malloc, calloc, realloc, and free in critical application code unless there is strong justification.
+- Prefer static allocation, fixed-size buffers, or controlled memory pools.
+- Do not let allocation failure become an uncontrolled runtime hazard.
+
+```
+Example:
+
+int *buffer = (int *)malloc(10U * sizeof(int)); /* Often noncompliant in critical systems */
+free(buffer);
+```
+
+## Standard library usage
+Some C library functions are risky because they hide bounds, rely on external state, or make failures hard to handle safely.
+
+- Be cautious with string handling functions.
+- Avoid APIs that do not make buffer size explicit.
+- Prefer safer, clearer, and more reviewable alternatives.
+- Ensure library use is compatible with project safety goals.
+
+```
+Example:
+
+char dest[8];
+strcpy(dest, "example text"); /* Noncompliant: possible overflow */
+```
+
+## Readability and maintainability
+MISRA C is not only about preventing runtime faults. It also aims to make code easier to inspect and maintain over time.
+
+- Keep comments accurate and useful.
+- Avoid dead code and unused objects.
+- Use consistent naming and declarations.
+- Make the programmer’s intent obvious during review.
+
+```
+Example:
+
+int result = compute();
+(void)result; /* Check whether ignoring the result is intentional */
+```
+
+## Compliance in practice
+MISRA C compliance is not just a tool report. It is part of the overall software development process.
+
+- Define a project compliance plan.
+- Configure analysis tools carefully.
+- Review violations systematically.
+- Track deviations and tool limitations.
+- Keep evidence for compliance claims.
+
+## Conclusion
+MISRA C helps teams use the C language in a more disciplined and predictable way. The goal is not to make code unnecessarily restrictive, but to reduce the chance of hidden bugs, unsafe behavior, and portability problems in critical systems.
+
+A practical MISRA C workflow combines:
+- a defined coding standard,
+- static analysis,
+- peer review,
+- formal deviations,
+- and consistent engineering discipline.
+
 
