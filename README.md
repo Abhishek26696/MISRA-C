@@ -86,8 +86,9 @@ Many bugs in C come from unclear or unsafe type behavior. MISRA C places strong 
 - Use fixed or project-defined types when width and range matter.
 
 ```
-Example:
 
+Example:
+```
 unsigned int u = 1U;
 int s = -1;
 
@@ -96,6 +97,7 @@ if (s < u)  /* Noncompliant style: mixed signed and unsigned comparison */
     /* ... */
 }
 ```
+
 ## Expressions and side effects
 Complex expressions are harder to review and more likely to hide subtle bugs. MISRA C prefers expressions that do one thing clearly.
 
